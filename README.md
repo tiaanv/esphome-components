@@ -19,3 +19,4 @@ display:
 - platform: t547
   id: t5_display
   update_interval: 30s
+```
