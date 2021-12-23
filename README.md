@@ -7,16 +7,16 @@ For more info in the display components, see the [ESP Home Display Documentation
 ## 1. Usage
 
 Use with [ESPHome](https://esphome.io/) (at least v1.18.0)
-Copy the t457 folder to your [Config/esphome/custom_components] folder.
-note: Create the [custom_components] folder if it does not exist
 
 ```yaml
 # The Basic Display Definition in ESPhome
+
+external_components:
+  - source: github://tiaanv/esphome-components
+    components: ["t547"]
 
 display:
 - platform: t547
   id: t5_display
   update_interval: 30s
-
-
-
+```
