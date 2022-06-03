@@ -30,6 +30,10 @@ class T547 : public PollingComponent, public display::DisplayBuffer {
 
   uint8_t get_panel_state() { return this->panel_on_; }
   bool get_greyscale() { return this->greyscale_; }
+ 
+  display::DisplayType get_display_type() override {
+    return get_greyscale() ? display::DisplayType::DISPLAY_TYPE_GRAYSCALE : display::DisplayType::DISPLAY_TYPE_BINARY;
+  }
 
  protected:
   void draw_absolute_pixel_internal(int x, int y, Color color) override;
