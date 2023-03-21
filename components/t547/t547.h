@@ -18,6 +18,7 @@ class T547 : public PollingComponent, public display::DisplayBuffer {
     this->greyscale_ = greyscale;
     this->initialize_();
   }
+  void set_invert(bool invert) { this->invert_ = invert; }
 
   float get_setup_priority() const override;
 
@@ -32,7 +33,7 @@ class T547 : public PollingComponent, public display::DisplayBuffer {
   uint8_t get_panel_state() { return this->panel_on_; }
   bool get_greyscale() { return this->greyscale_; }
 
-#if ESPHOME_VERSION_CODE >= VERSION_CODE(2022,6,0) 
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2022,6,0)
   display::DisplayType get_display_type() override {
     return get_greyscale() ? display::DisplayType::DISPLAY_TYPE_GRAYSCALE : display::DisplayType::DISPLAY_TYPE_BINARY;
   }
@@ -52,12 +53,11 @@ class T547 : public PollingComponent, public display::DisplayBuffer {
 
   size_t get_buffer_length_();
 
-
   uint8_t panel_on_ = 0;
   uint8_t temperature_;
 
   bool greyscale_;
-
+  bool invert_;
 };
 
 }  // namespace T547
