@@ -4,6 +4,7 @@ from esphome import pins
 from esphome.components import display
 from esphome.const import (
     CONF_ID,
+    CONF_INVERT,
     CONF_LAMBDA,
     CONF_PAGES,
 )
@@ -11,7 +12,6 @@ from esphome.const import (
 DEPENDENCIES = ["esp32"]
 
 CONF_GREYSCALE = "greyscale"
-
 
 t547_ns = cg.esphome_ns.namespace("t547")
 T547 = t547_ns.class_(
@@ -23,6 +23,7 @@ CONFIG_SCHEMA = cv.All(
         {
             cv.GenerateID(): cv.declare_id(T547),
             cv.Optional(CONF_GREYSCALE, default=False): cv.boolean,
+            cv.Optional(CONF_INVERT, default=True): cv.boolean,
         }
     )
     .extend(cv.polling_component_schema("5s")),
@@ -44,5 +45,6 @@ async def to_code(config):
         cg.add(var.set_writer(lambda_))
 
     cg.add(var.set_greyscale(config[CONF_GREYSCALE]))
+    cg.add(var.set_invert(config[CONF_INVERT]))
 
     cg.add_build_flag("-DBOARD_HAS_PSRAM")

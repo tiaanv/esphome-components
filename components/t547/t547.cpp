@@ -20,7 +20,7 @@ void T547::setup() {
 }
 
 void T547::initialize_() {
-  ESP_LOGV(TAG, "Initialize called");  
+  ESP_LOGV(TAG, "Initialize called");
   uint32_t buffer_size = this->get_buffer_length_();
 
   if (this->buffer_ != nullptr) {
@@ -36,9 +36,9 @@ void T547::initialize_() {
     this->mark_failed();
     return;
   }
-
-  memset(this->buffer_, 255, buffer_size);
-  ESP_LOGV(TAG, "Initialize complete");  
+  uint8_t background = invert_ ? 255 : 0;
+  memset(this->buffer_, background, buffer_size);
+  ESP_LOGV(TAG, "Initialize complete");
 }
 
 float T547::get_setup_priority() const { return setup_priority::PROCESSOR; }
@@ -54,7 +54,10 @@ void T547::update() {
 void HOT T547::draw_absolute_pixel_internal(int x, int y, Color color) {
   if (x >= this->get_width_internal() || y >= this->get_height_internal() || x < 0 || y < 0)
     return;
-  uint8_t gs = 255 - ((color.red * 2126 / 10000) + (color.green * 7152 / 10000) + (color.blue * 722 / 10000));
+  uint8_t gs = ((color.red * 2126 / 10000) + (color.green * 7152 / 10000) + (color.blue * 722 / 10000));
+  if (invert_) {
+    gs = 255 - gs;
+  }
   epd_draw_pixel(x, y, gs, this->buffer_);
 }
 
@@ -75,7 +78,7 @@ void T547::eink_on_() {
   ESP_LOGV(TAG, "Eink on called");
   if (panel_on_ == 1)
     return;
-  epd_poweron();    
+  epd_poweron();
   panel_on_ = 1;
 }
 
