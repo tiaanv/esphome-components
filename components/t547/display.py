@@ -8,6 +8,7 @@ from esphome.const import (
     CONF_LAMBDA,
     CONF_PAGES,
 )
+from esphome.const import __version__ as ESPHOME_VERSION
 
 DEPENDENCIES = ["esp32"]
 
@@ -39,8 +40,12 @@ async def to_code(config):
     await display.register_display(var, config)
 
     if CONF_LAMBDA in config:
+        if cv.Version.parse(ESPHOME_VERSION) < cv.Version.parse("2023.7.0"):
+            displayRef = display.DisplayBufferRef
+        else:
+            displayRef = display.DisplayRef
         lambda_ = await cg.process_lambda(
-            config[CONF_LAMBDA], [(display.DisplayBufferRef, "it")], return_type=cg.void
+            config[CONF_LAMBDA], [(displayRef, "it")], return_type=cg.void
         )
         cg.add(var.set_writer(lambda_))
 
