@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include <driver/gpio.h>
+#include <driver/gpio_periph.h>
 #include <esp_attr.h>
 
 
