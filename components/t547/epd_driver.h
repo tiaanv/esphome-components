@@ -110,7 +110,7 @@ void epd_push_pixels(Rect_t area, short time, int color);
  *   Pixel data is packed (two pixels per byte). A byte cannot wrap over multiple
  *   rows, images of uneven width must add a padding nibble per line.
  */
-void IRAM_ATTR epd_draw_grayscale_image(Rect_t area, uint8_t *data);
+void epd_draw_grayscale_image(Rect_t area, uint8_t *data);
 
 /**
  * Draw a picture to a given area, with some draw mode.
@@ -123,11 +123,11 @@ void IRAM_ATTR epd_draw_grayscale_image(Rect_t area, uint8_t *data);
  *   Pixel data is packed (two pixels per byte). A byte cannot wrap over multiple
  *   rows, images of uneven width must add a padding nibble per line.
  */
-void IRAM_ATTR epd_draw_image(Rect_t area, uint8_t *data, enum DrawMode mode);
+void epd_draw_image(Rect_t area, uint8_t *data, enum DrawMode mode);
 
 
 
-void IRAM_ATTR epd_draw_frame_1bit(Rect_t area, uint8_t *ptr, enum DrawMode mode, int time);
+void epd_draw_frame_1bit(Rect_t area, uint8_t *ptr, enum DrawMode mode, int time);
 /**
  * @returns Rectancle representing the whole screen area.
  */
@@ -367,3 +367,4 @@ void write_string(const GFXfont *font, const char *string, int *cursor_x,
 #ifdef __cplusplus
 }
 #endif
+
