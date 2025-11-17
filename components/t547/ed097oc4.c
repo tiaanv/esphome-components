@@ -2,6 +2,8 @@
 
 #include <string.h>
 
+#include "soc/gpio_struct.h"
+
 #include <esp_timer.h>
 #include <xtensa/core-macros.h>
 
