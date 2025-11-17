@@ -2,18 +2,16 @@
 
 #include <driver/periph_ctrl.h>
 #include <esp_heap_caps.h>
-
-// #include <esp_idf_version.h>
-// #if ESP_IDF_VERSION_MAJOR >= 4
-// #include <esp32/rom/lldesc.h>
-// #else
-
 #include <rom/lldesc.h>
 
-// #endif
 #include <soc/i2s_reg.h>
 #include <soc/i2s_struct.h>
 #include <soc/rtc.h>
+
+// NEW mandatory includes for IDF 5.x:
+#include <soc/io_mux_reg.h>      // PIN_FUNC_SELECT, IOMUX
+#include <soc/gpio_sig_map.h>    // I2S1O_DATA_OUT0_IDX, I2S1O_WS_OUT_IDX
+#include <esp32/rom/gpio.h>      // gpio_matrix_out()
 
 
 /// DMA descriptors for front and back line buffer.
@@ -184,7 +182,8 @@ void i2s_bus_init(i2s_bus_config *cfg)
 
 //#if defined(CONFIG_EPD_DISPLAY_TYPE_ED097OC4_LQ)
     // Initialize Audio Clock (APLL) for 120 Mhz.
-    rtc_clk_apll_enable(1, 0, 0, 8, 0);
+    //rtc_clk_apll_enable(1, 0, 0, 8, 0);
+    rtc_clk_apll_enable(true);
 //#else
     // Initialize Audio Clock (APLL) for 80 Mhz.
 // rtc_clk_apll_enable(1, 0, 0, 8, 1);
@@ -275,3 +274,4 @@ void i2s_deinit()
 
     periph_module_disable(PERIPH_I2S1_MODULE);
 }
+
