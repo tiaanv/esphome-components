@@ -7,6 +7,7 @@
 // Required for IDF 5.x (Arduino 3.2.1)
 #include <hal/rmt_ll.h>
 #include <soc/rmt_struct.h>
+#include <soc/rmt_reg.h>
 
 static intr_handle_t gRMT_intr_handle = NULL;
 
