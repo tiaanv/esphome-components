@@ -9,9 +9,8 @@
 #include <soc/rtc.h>
 
 // NEW mandatory includes for IDF 5.x:
-#include <soc/io_mux_reg.h>      // PIN_FUNC_SELECT, IOMUX
-#include <soc/gpio_sig_map.h>    // I2S1O_DATA_OUT0_IDX, I2S1O_WS_OUT_IDX
-#include <esp32/rom/gpio.h>      // gpio_matrix_out()
+//#include <esp32/rom/gpio.h>      // gpio_matrix_out()
+#include <driver/gpio.h>      // gpio_matrix_out()
 
 
 /// DMA descriptors for front and back line buffer.
@@ -76,7 +75,7 @@ static void gpio_setup_out(int gpio, int sig, bool invert)
     gpio_matrix_out(gpio, sig, invert, false);
 
     // Configure the IO-MUX for GPIO function
-    PIN_FUNC_SELECT(iomux_pin[gpio].mux_reg, PIN_FUNC_GPIO);
+    //PIN_FUNC_SELECT(iomux_pin[gpio].mux_reg, PIN_FUNC_GPIO);
 }
 
 /// Resets "Start Pulse" signal when the current row output is done.
@@ -280,6 +279,7 @@ void i2s_deinit()
 
     periph_module_disable(PERIPH_I2S1_MODULE);
 }
+
 
 
 
