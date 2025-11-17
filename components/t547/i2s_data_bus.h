@@ -61,7 +61,7 @@ void i2s_start_line_output();
 /**
  * Returns true if there is an ongoing transmission.
  */
-bool Ii2s_is_busy();
+bool i2s_is_busy();
 
 /**
  * Give up allocated resources.
