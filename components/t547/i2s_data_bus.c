@@ -76,7 +76,7 @@ static void gpio_setup_out(int gpio, int sig, bool invert)
     gpio_matrix_out(gpio, sig, invert, false);
 
     // Set pin function to GPIO
-    PIN_FUNC_SELECT(IOMUX_REG(gpio), PIN_FUNC_GPIO);
+    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
 }
 
 /// Resets "Start Pulse" signal when the current row output is done.
@@ -280,5 +280,6 @@ void i2s_deinit()
 
     periph_module_disable(PERIPH_I2S1_MODULE);
 }
+
 
 
