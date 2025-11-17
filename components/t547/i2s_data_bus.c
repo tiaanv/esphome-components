@@ -11,7 +11,7 @@
 // NEW mandatory includes for IDF 5.x:
 #include <esp32/rom/gpio.h>      // gpio_matrix_out()
 //#include <driver/gpio.h>      // gpio_matrix_out()
-#include <soc/gpio_sig_map.h
+#include <soc/gpio_sig_map.h>
 
 
 /// DMA descriptors for front and back line buffer.
@@ -280,6 +280,7 @@ void i2s_deinit()
 
     periph_module_disable(PERIPH_I2S1_MODULE);
 }
+
 
 
 
