@@ -69,14 +69,14 @@ static void gpio_setup_out(int gpio, int sig, bool invert)
     if (gpio < 0)
         return;
 
-    // Set direction
+    // Configure pin as GPIO output
     gpio_set_direction(gpio, GPIO_MODE_OUTPUT);
 
-    // Route internal peripheral signal (I2S) to this pin
+    // Connect internal peripheral output to GPIO
     gpio_matrix_out(gpio, sig, invert, false);
 
-    // Set pin function to GPIO
-    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
+    // Configure the IO-MUX for GPIO function
+    PIN_FUNC_SELECT(iomux_pin[gpio].mux_reg, PIN_FUNC_GPIO);
 }
 
 /// Resets "Start Pulse" signal when the current row output is done.
@@ -280,6 +280,7 @@ void i2s_deinit()
 
     periph_module_disable(PERIPH_I2S1_MODULE);
 }
+
 
 
 
