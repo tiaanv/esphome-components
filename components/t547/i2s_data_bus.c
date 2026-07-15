@@ -1,7 +1,9 @@
 #include "i2s_data_bus.h"
 
 #include <driver/periph_ctrl.h>
+#include <clk_ctrl_os.h>
 #include <esp_heap_caps.h>
+#include <esp_rom_gpio.h>
 
 // #include <esp_idf_version.h>
 // #if ESP_IDF_VERSION_MAJOR >= 4
@@ -13,6 +15,7 @@
 // #endif
 #include <soc/i2s_reg.h>
 #include <soc/i2s_struct.h>
+#include <soc/gpio_sig_map.h>
 #include <soc/rtc.h>
 
 
@@ -66,13 +69,17 @@ uint32_t dma_desc_addr()
 }
 
 /// Set up a GPIO as output and route it to a signal.
+/// ESP-IDF 5.x: GPIO_PIN_MUX_REG[]/PIN_FUNC_SELECT() and gpio_matrix_out()
+/// no longer exist. esp_rom_gpio_pad_select_gpio() and
+/// esp_rom_gpio_connect_out_signal() are their direct ROM-level
+/// replacements and do the same work.
 static void gpio_setup_out(int gpio, int sig, bool invert)
 {
     if (gpio == -1)
         return;
-    PIN_FUNC_SELECT(GPIO_PIN_MUX_REG[gpio], PIN_FUNC_GPIO);
+    esp_rom_gpio_pad_select_gpio(gpio);
     gpio_set_direction(gpio, GPIO_MODE_DEF_OUTPUT);
-    gpio_matrix_out(gpio, sig, invert, false);
+    esp_rom_gpio_connect_out_signal(gpio, sig, invert, false);
 }
 
 /// Resets "Start Pulse" signal when the current row output is done.
@@ -142,6 +149,10 @@ void i2s_bus_init(i2s_bus_config *cfg)
 
     // Use I2S1 with no signal offset (for some reason the offset seems to be
     // needed in 16-bit mode, but not in 8 bit mode.
+    // I2S1O_DATA_OUT0_IDX / I2S1O_WS_OUT_IDX are declared in
+    // soc/gpio_sig_map.h - ESP-IDF 5.x no longer pulls that header in
+    // transitively via driver/periph_ctrl.h, so it's now included directly
+    // above. The constants themselves are unchanged.
     int signal_base = I2S1O_DATA_OUT0_IDX;
 
     // Setup and route GPIOS
@@ -182,14 +193,17 @@ void i2s_bus_init(i2s_bus_config *cfg)
     // (Smallest possible divider according to the spec).
     dev->sample_rate_conf.tx_bck_div_num = 2;
 
-//#if defined(CONFIG_EPD_DISPLAY_TYPE_ED097OC4_LQ)
     // Initialize Audio Clock (APLL) for 120 Mhz.
-    rtc_clk_apll_enable(1, 0, 0, 8, 0);
-//#else
-    // Initialize Audio Clock (APLL) for 80 Mhz.
-// rtc_clk_apll_enable(1, 0, 0, 8, 1);
-//#endif
-
+    // ESP-IDF 5.x removed the old 5-argument
+    // rtc_clk_apll_enable(enable, sdm0, sdm1, sdm2, o_div) that hand-picked
+    // register coefficients for a target frequency. In its place we use the
+    // same high-level "request a frequency" API that ESP-IDF's own internal
+    // drivers (esp_hw_support/clk_ctrl_os.c, used by the I2S/DAC/legacy ADC
+    // drivers) use to allocate the APLL clock: acquire the clock source,
+    // then ask the clock-tree driver to compute the coefficients for us.
+    periph_rtc_apll_acquire();
+    uint32_t apll_real_freq_hz = 0;
+    periph_rtc_apll_freq_set(120000000, &apll_real_freq_hz);
 
     // Set Audio Clock Dividers
     dev->clkm_conf.val = 0;
@@ -273,5 +287,6 @@ void i2s_deinit()
     free((void *)i2s_state.dma_desc_a);
     free((void *)i2s_state.dma_desc_b);
 
+    periph_rtc_apll_release();
     periph_module_disable(PERIPH_I2S1_MODULE);
 }
