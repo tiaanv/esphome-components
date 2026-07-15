@@ -1,7 +1,7 @@
 #include "i2s_data_bus.h"
 
 #include <driver/periph_ctrl.h>
-#include <driver/clk_ctrl_os.h>
+#include <clk_ctrl_os.h>
 #include <esp_heap_caps.h>
 #include <esp_rom_gpio.h>
 
